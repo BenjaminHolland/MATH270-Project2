@@ -30,17 +30,31 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <canvas id="simulation-chart-1"></canvas>
+            <canvas id="simulation-hit-chart-1"></canvas>
         </div>
         <div class="col">
-            <canvas id="simulation-chart-2"></canvas>
+            <canvas id="simulation-block-chart-1"></canvas>
         </div>
         <div class="w-100"></div>
         <div class="col">
-            <canvas id="simulation-chart-3"></canvas>
+            <canvas id="simulation-hit-chart-2"></canvas>
         </div>
         <div class="col">
-            <canvas id="simulation-chart-4"></canvas>
+            <canvas id="simulation-block-chart-2"></canvas>
+        </div>
+        <div class="w-100"></div>
+        <div class="col">
+            <canvas id="simulation-hit-chart-3"></canvas>
+        </div>
+        <div class="col">
+            <canvas id="simulation-block-chart-3"></canvas>
+        </div>
+        <div class="w-100"></div>
+        <div class="col">
+            <canvas id="simulation-hit-chart-4"></canvas>
+        </div>
+        <div class="col">
+            <canvas id="simulation-block-chart-4"></canvas>
         </div>
     </div>
 </div>
@@ -59,6 +73,7 @@
             }
             histogram.push(row);
         }
+
         for (var bombIdx = 0; bombIdx < bombCount; bombIdx++) {
             var hit = {
                 x: math.random() * 10,
@@ -68,13 +83,150 @@
             var yi = parseInt(hit.y);
             histogram[yi][xi]++;
             hits.push(hit);
-
         }
+
         return {
             hits: hits,
             hist: histogram
         };
     }
+
+    function generateHitChart(hits, hitContext, simulationIdx) {
+        var options = {
+            responsive: true,
+            aspectRatio: 1,
+            maintainAspectRatio: true,
+            title: {
+                display: true,
+                text: "Simulation Hits" + simulationIdx.toString(),
+                backgroundColor: '#f00',
+            },
+            legend: {
+                display: true,
+                labels: {
+                    fontColor: '#ff0000',
+                    usePointStyle: true
+                }
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 0,
+                        max: 10,
+                        stepSize: 1
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        min: 0,
+                        max: 10,
+                        stepSize: 1
+                    }
+                }]
+            }
+        }
+        var chart = new Chart(hitContext, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: "Bombs",
+                    data: hits,
+                }]
+            },
+            options: options,
+        });
+
+    }
+    function fitCurve(bombs){
+        var a=6.380239
+        var b=.174958
+        var c=-0.08341
+        var d=-5.430021
+
+        return a/(1+b*math.pow(math.E,c*bombs))+d;
+    }
+    function generateBlockChart(blocks, blockContext, simulationIdx) {
+        var options = {
+            responsive: true,
+            aspectRatio: 1,
+            maintainAspectRatio: true,
+            title: {
+                display: true,
+                text: "Simulation Histogram" + simulationIdx.toString(),
+                backgroundColor: '#f00',
+            },
+            legend: {
+                display: true,
+                labels: {
+                    fontColor: '#ff0000',
+                    usePointStyle: true
+                }
+            },
+            tooltips: {
+                callbacks: {
+                    label:function (tooltipItem,data) {
+                        console.log(tooltipItem);
+                        console.log(data);
+                        return data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].v;
+                    }
+                }
+            },
+
+            elements:{
+                point:{
+                    radius:function(context){
+                        var value = context.dataset.data[context.dataIndex];
+                        var size = context.chart.width*0.95;
+                        return (size / 10)*fitCurve(value.v);
+                    }
+                }
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 0,
+                        max: 10,
+                        stepSize: 1
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        min: 0,
+                        max: 10,
+                        stepSize: 1
+                    }
+                }]
+            }
+        }
+        var daters = []
+        for (var y = 0; y < 10; y++) {
+            for (var x = 0; x < 10; x++) {
+                daters.push({
+                    x: x + 0.5,
+                    y: y + 0.5,
+                    v: blocks[y][x]
+
+                });
+            }
+        }
+        var chart = new Chart(blockContext, {
+            type: 'bubble',
+            data: {
+                datasets: [{
+                    label: "Bombs",
+                    data: daters,
+                }]
+            },
+            options: options,
+        });
+    }
+
+    function generateSimulationCharts(hitContext, blockContext, simulationIdx) {
+        var data = generateSimulationData(200);
+        generateHitChart(data.hits, hitContext, simulationIdx);
+        generateBlockChart(data.hist,blockContext,simulationIdx);
+    }
+
 
     function runSimulation(context, simulationIdx) {
         var bombs = generateSimulationData(200);
@@ -88,18 +240,25 @@
                 });
             }
         }
+        var pointOpts = Object.create(Chart.defaults.global.elements.point);
+
         var chart = new Chart(context, {
             type: 'scatter',
             data: {
                 datasets: [{
                     label: 'Bombs',
                     data: bombs.hits,
-                    backgroundColor:'#fff00ff',
+                    radius: function (context) {
+                        return 5;
+                    }
                 }, {
                     type: 'bubble',
                     label: "Bomb Hits",
-                    data: blocks
-                },]
+                    data: blocks,
+                    radius: function (context) {
+                        return 1;
+                    }
+                }]
             },
             options: {
                 responsive: true,
@@ -118,14 +277,7 @@
                     }
                 },
                 elements: {
-                    point: {
-
-                        pointRadius:1,
-                        radius: function (context) {
-                            return 10;
-
-                        }
-                    }
+                    point: pointOpts,
                 },
                 scales: {
                     yAxes: [{
@@ -148,9 +300,14 @@
     }
 
     for (var simulationIdx = 0; simulationIdx < 4; simulationIdx++) {
-        var id = 'simulation-chart-' + (simulationIdx + 1).toString(10)
-        console.log(id);
-        runSimulation(document.getElementById(id).getContext('2d'), simulationIdx);
+        var hitid = 'simulation-hit-chart-' + (simulationIdx + 1).toString(10);
+        var blockid = 'simulation-block-chart-' + (simulationIdx + 1).toString(10);
+        generateSimulationCharts(
+            document.getElementById(hitid).getContext('2d'),
+            document.getElementById(blockid).getContext('2d'),
+            simulationIdx
+        );
+        //runSimulation(document.getElementById(id).getContext('2d'), simulationIdx);
     }
 </script>
 </body>
