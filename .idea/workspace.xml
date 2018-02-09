@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="15c82f51-976c-4847-bff9-30e18bd9e6cb" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -28,12 +27,10 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="108">
-              <caret line="169" column="90" lean-forward="false" selection-start-line="169" selection-start-column="90" selection-end-line="169" selection-end-column="90" />
+            <state relative-caret-position="494">
+              <caret line="340" column="8" lean-forward="false" selection-start-line="340" selection-start-column="8" selection-end-line="340" selection-end-column="8" />
               <folding>
-                <element signature="e#2447#3108#0" expanded="false" />
-                <element signature="e#3197#4106#0" expanded="false" />
-                <element signature="e#7147#9290#0" expanded="false" />
+                <element signature="e#11061#13204#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -267,12 +264,12 @@
       <workItem from="1517975088383" duration="61000" />
       <workItem from="1517978223458" duration="31000" />
       <workItem from="1518152483260" duration="9243000" />
-      <workItem from="1518162500503" duration="4902000" />
+      <workItem from="1518162500503" duration="9638000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17109000" />
+    <option name="totallyTimeSpent" value="21845000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1885" y="-4" width="1885" height="1084" extended-state="6" />
@@ -319,7 +316,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/index.html</url>
-          <line>311</line>
+          <line>428</line>
         </line-breakpoint>
       </breakpoints>
       <option name="time" value="2" />
@@ -348,9 +345,7 @@
         <state relative-caret-position="1404">
           <caret line="78" column="28" lean-forward="true" selection-start-line="78" selection-start-column="28" selection-end-line="78" selection-end-column="28" />
           <folding>
-            <element signature="e#2447#3108#0" expanded="false" />
-            <element signature="e#3197#4106#0" expanded="false" />
-            <element signature="e#7147#9290#0" expanded="false" />
+            <element signature="e#11061#13204#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -397,12 +392,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="169" column="90" lean-forward="false" selection-start-line="169" selection-start-column="90" selection-end-line="169" selection-end-column="90" />
+        <state relative-caret-position="494">
+          <caret line="340" column="8" lean-forward="false" selection-start-line="340" selection-start-column="8" selection-end-line="340" selection-end-column="8" />
           <folding>
-            <element signature="e#2447#3108#0" expanded="false" />
-            <element signature="e#3197#4106#0" expanded="false" />
-            <element signature="e#7147#9290#0" expanded="false" />
+            <element signature="e#11061#13204#0" expanded="false" />
           </folding>
         </state>
       </provider>

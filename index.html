@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Math 270 Project 2</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
@@ -17,11 +17,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.20.1/math.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>
     <style>
-        .square {
-            width: 100%;
-
-            padding-bottom: 100%;
-        }
 
     </style>
 </head>
@@ -30,37 +25,68 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <canvas id="simulation-hit-chart-1"></canvas>
+            <div class="row">
+                <div class="col">
+                    <canvas id="simulation-hit-chart-1"></canvas>
+                </div>
+                <div class="col">
+                    <canvas id="simulation-block-chart-1"></canvas>
+                </div>
+                <div class="w-100"></div>
+                <div class="col">
+                    <canvas id="simulation-correlation-chart-1"></canvas>
+                </div>
+            </div>
         </div>
-        <div class="col">
-            <canvas id="simulation-block-chart-1"></canvas>
-        </div>
+
         <div class="w-100"></div>
         <div class="col">
-            <canvas id="simulation-hit-chart-2"></canvas>
-        </div>
+            <div class="row">
+                <div class="col">
+                    <canvas id="simulation-hit-chart-2"></canvas>
+                </div>
+                <div class="col">
+                    <canvas id="simulation-block-chart-2"></canvas>
+                </div>
+                <div class="w-100"></div>
+                <div class="col">
+                    <canvas id="simulation-correlation-chart-2"></canvas>
+                </div>
+            </div>
+        </div><div class="w-100"></div>
         <div class="col">
-            <canvas id="simulation-block-chart-2"></canvas>
-        </div>
-        <div class="w-100"></div>
+            <div class="row">
+                <div class="col">
+                    <canvas id="simulation-hit-chart-3"></canvas>
+                </div>
+                <div class="col">
+                    <canvas id="simulation-block-chart-3"></canvas>
+                </div>
+                <div class="w-100"></div>
+                <div class="col">
+                    <canvas id="simulation-correlation-chart-3"></canvas>
+                </div>
+            </div>
+        </div><div class="w-100"></div>
         <div class="col">
-            <canvas id="simulation-hit-chart-3"></canvas>
-        </div>
-        <div class="col">
-            <canvas id="simulation-block-chart-3"></canvas>
-        </div>
-        <div class="w-100"></div>
-        <div class="col">
-            <canvas id="simulation-hit-chart-4"></canvas>
-        </div>
-        <div class="col">
-            <canvas id="simulation-block-chart-4"></canvas>
+            <div class="row">
+                <div class="col">
+                    <canvas id="simulation-hit-chart-4"></canvas>
+                </div>
+                <div class="col">
+                    <canvas id="simulation-block-chart-4"></canvas>
+                </div>
+                <div class="w-100"></div>
+                <div class="col">
+                    <canvas id="simulation-correlation-chart-4"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 <script>
-    function bernoulli(n, p, k) {
-        return math.combinations(n, k) * math.pow(p, k) * math.pow(1 - p, n - k)
+    function poisson(gamma, k) {
+        return (math.pow(gamma, k) * math.pow(math.E, -gamma)) / math.factorial(k);
     }
 
     function generateSimulationData(bombCount) {
@@ -91,6 +117,19 @@
         };
     }
 
+    //No, I wouldn't do this in production code, why do you ask?
+    function incrediblyInefficientMethodOfCountingOccurancesWithAVeryLongName(histogram, item) {
+        var occurances = 0;
+        for (var y = 0; y < 10; y++) {
+            for (var x = 0; x < 10; x++) {
+                if (histogram[y][x] === item) {
+                    occurances++;
+                }
+            }
+        }
+        return occurances;
+    }
+
     function generateHitChart(hits, hitContext, simulationIdx) {
         var options = {
             responsive: true,
@@ -98,13 +137,11 @@
             maintainAspectRatio: true,
             title: {
                 display: true,
-                text: "Simulation Hits" + simulationIdx.toString(),
-                backgroundColor: '#f00',
+                text: "Bomb Locations (Simulation " + (simulationIdx+1).toString()+")",
             },
             legend: {
                 display: true,
                 labels: {
-                    fontColor: '#ff0000',
                     usePointStyle: true
                 }
             },
@@ -131,20 +168,94 @@
                 datasets: [{
                     label: "Bombs",
                     data: hits,
+                    backgroundColor:'#faa'
                 }]
             },
             options: options,
         });
 
     }
-    function fitCurve(bombs){
-        var a=6.380239
-        var b=.174958
-        var c=-0.08341
-        var d=-5.430021
 
-        return a/(1+b*math.pow(math.E,c*bombs))+d;
+    function generateCorrelationChart(blocks, correlationContext, simulationIdx) {
+
+        var options = {
+            responsive: true,
+
+            maintainAspectRatio: true,
+            title: {
+                display: true,
+                text: "Expected v. Actual (Simulation " + (simulationIdx+1).toString()+")",
+
+            },
+            legend: {
+                display: true,
+                labels: {
+                    usePointStyle: true
+                }
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 0,
+                        max: 1,
+                        stepSize: 0.1
+                    }
+                }],
+                xAxes:[{
+                    type:'linear',
+                    ticks:{
+                        min:0,
+                        max:20,
+
+                    }
+                }]
+
+            }
+        }
+        var predictedData = [];
+        var actualData = [];
+        for (var i = 0; i < 200; i++) {
+            predictedData.push({
+                x: i,
+                y: poisson(2, i)
+            });
+            actualData.push({
+                x: i,
+                y: incrediblyInefficientMethodOfCountingOccurancesWithAVeryLongName(blocks, i) / 100.0
+            });
+        }
+        var chart = new Chart(correlationContext, {
+            type: 'line',
+
+            data: {
+                datasets: [{
+                    label: "Actual",
+                    data: actualData,
+                    backgroundColor:'#ba1aac88'
+                },{
+                    label: "Predicted",
+                    data: predictedData,
+                    backgroundColor:'#3ba8'
+                }]
+            },
+            options: options,
+        });
     }
+
+    function fitCurve(bombs) {
+        //Attempted to use a power regression to get a useable size coefficient in the range [0,1] for bomb counts
+        //in the range of [0,200]. It works(ish), but it really should be a bit smoother (maybe going with a high
+        // degree polynomial instead), and the dynamic sizing
+        //of the grid means that it's difficult to find the actual base for how big each cell is, so even if it
+        //does work right the display is off.
+        var a = 6.380239;
+        var b = .174958;
+        var c = -0.08341;
+        var d = -5.430021;
+
+        return a / (1 + b * math.pow(math.E, c * bombs)) + d;
+    }
+
     function generateBlockChart(blocks, blockContext, simulationIdx) {
         var options = {
             responsive: true,
@@ -152,19 +263,18 @@
             maintainAspectRatio: true,
             title: {
                 display: true,
-                text: "Simulation Histogram" + simulationIdx.toString(),
-                backgroundColor: '#f00',
+                text: "Bombs per Block (Simulation " + (simulationIdx+1).toString()+")",
+
             },
             legend: {
                 display: true,
                 labels: {
-                    fontColor: '#ff0000',
                     usePointStyle: true
                 }
             },
             tooltips: {
                 callbacks: {
-                    label:function (tooltipItem,data) {
+                    label: function (tooltipItem, data) {
                         console.log(tooltipItem);
                         console.log(data);
                         return data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].v;
@@ -172,12 +282,13 @@
                 }
             },
 
-            elements:{
-                point:{
-                    radius:function(context){
+            elements: {
+                point: {
+                    radius: function (context) {
                         var value = context.dataset.data[context.dataIndex];
-                        var size = context.chart.width*0.95;
-                        return (size / 10)*fitCurve(value.v);
+                        var size = context.chart.width * 0.95;
+
+                        return (size / 10) * fitCurve(value.v);
                     }
                 }
             },
@@ -215,16 +326,19 @@
                 datasets: [{
                     label: "Bombs",
                     data: daters,
+                    backgroundColor:'#faa'
                 }]
             },
             options: options,
         });
     }
 
-    function generateSimulationCharts(hitContext, blockContext, simulationIdx) {
+    function generateSimulationCharts(hitContext, blockContext,corContext, simulationIdx) {
         var data = generateSimulationData(200);
         generateHitChart(data.hits, hitContext, simulationIdx);
-        generateBlockChart(data.hist,blockContext,simulationIdx);
+        generateBlockChart(data.hist, blockContext, simulationIdx);
+        generateCorrelationChart(data.hist,corContext,simulationIdx);
+        
     }
 
 
@@ -302,11 +416,14 @@
     for (var simulationIdx = 0; simulationIdx < 4; simulationIdx++) {
         var hitid = 'simulation-hit-chart-' + (simulationIdx + 1).toString(10);
         var blockid = 'simulation-block-chart-' + (simulationIdx + 1).toString(10);
+        var corid='simulation-correlation-chart-'+ (simulationIdx + 1).toString(10);
         generateSimulationCharts(
             document.getElementById(hitid).getContext('2d'),
             document.getElementById(blockid).getContext('2d'),
+            document.getElementById(corid).getContext('2d'),
             simulationIdx
         );
+
         //runSimulation(document.getElementById(id).getContext('2d'), simulationIdx);
     }
 </script>
