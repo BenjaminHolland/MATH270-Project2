@@ -17,15 +17,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.20.1/math.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>
     <style>
+        .card-columns {
+            column-count:2;
+            width: 90%;
+            margin: 0 auto;
+        }
+        .container{
 
+            width: 95%;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <div class="row">
+<nav class="navbar navbar-light">
+    <h1 class="navbar-brand" >
+        Math 270 Project 2
+    </h1>
+</nav>
+    <div class="card-columns">
+        <div class="card">
+            <div class="card-header">Simulation 1</div>
+            <div class="row card-block">
                 <div class="col">
                     <canvas id="simulation-hit-chart-1"></canvas>
                 </div>
@@ -38,24 +51,9 @@
                 </div>
             </div>
         </div>
-
-        <div class="w-100"></div>
-        <div class="col">
-            <div class="row">
-                <div class="col">
-                    <canvas id="simulation-hit-chart-2"></canvas>
-                </div>
-                <div class="col">
-                    <canvas id="simulation-block-chart-2"></canvas>
-                </div>
-                <div class="w-100"></div>
-                <div class="col">
-                    <canvas id="simulation-correlation-chart-2"></canvas>
-                </div>
-            </div>
-        </div><div class="w-100"></div>
-        <div class="col">
-            <div class="row">
+        <div class="card">
+            <div class="card-header">Simulation 3</div>
+            <div class="row card-block">
                 <div class="col">
                     <canvas id="simulation-hit-chart-3"></canvas>
                 </div>
@@ -67,9 +65,26 @@
                     <canvas id="simulation-correlation-chart-3"></canvas>
                 </div>
             </div>
-        </div><div class="w-100"></div>
-        <div class="col">
-            <div class="row">
+        </div>
+        <div class="card">
+            <div class="card-header">Simulation 2</div>
+            <div class="row card-block">
+                <div class="col">
+                    <canvas id="simulation-hit-chart-2"></canvas>
+                </div>
+                <div class="col">
+                    <canvas id="simulation-block-chart-2"></canvas>
+                </div>
+                <div class="w-100"></div>
+                <div class="col">
+                    <canvas id="simulation-correlation-chart-2"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">Simulation 4</div>
+            <div class="row card-block">
                 <div class="col">
                     <canvas id="simulation-hit-chart-4"></canvas>
                 </div>
@@ -83,7 +98,6 @@
             </div>
         </div>
     </div>
-</div>
 <script>
     function poisson(gamma, k) {
         return (math.pow(gamma, k) * math.pow(math.E, -gamma)) / math.factorial(k);
@@ -137,7 +151,7 @@
             maintainAspectRatio: true,
             title: {
                 display: true,
-                text: "Bomb Locations (Simulation " + (simulationIdx+1).toString()+")",
+                text: "Bomb Locations (Simulation " + (simulationIdx + 1).toString() + ")",
             },
             legend: {
                 display: true,
@@ -168,7 +182,7 @@
                 datasets: [{
                     label: "Bombs",
                     data: hits,
-                    backgroundColor:'#faa'
+                    backgroundColor: '#faa'
                 }]
             },
             options: options,
@@ -184,7 +198,7 @@
             maintainAspectRatio: true,
             title: {
                 display: true,
-                text: "Expected v. Actual (Simulation " + (simulationIdx+1).toString()+")",
+                text: "Expected v. Actual (Simulation " + (simulationIdx + 1).toString() + ")",
 
             },
             legend: {
@@ -201,11 +215,11 @@
                         stepSize: 0.1
                     }
                 }],
-                xAxes:[{
-                    type:'linear',
-                    ticks:{
-                        min:0,
-                        max:20,
+                xAxes: [{
+                    type: 'linear',
+                    ticks: {
+                        min: 0,
+                        max: 20,
 
                     }
                 }]
@@ -231,11 +245,11 @@
                 datasets: [{
                     label: "Actual",
                     data: actualData,
-                    backgroundColor:'#ba1aac88'
-                },{
+                    backgroundColor: '#ba1aac88'
+                }, {
                     label: "Predicted",
                     data: predictedData,
-                    backgroundColor:'#3ba8'
+                    backgroundColor: '#3ba8'
                 }]
             },
             options: options,
@@ -263,7 +277,7 @@
             maintainAspectRatio: true,
             title: {
                 display: true,
-                text: "Bombs per Block (Simulation " + (simulationIdx+1).toString()+")",
+                text: "Bombs per Block (Simulation " + (simulationIdx + 1).toString() + ")",
 
             },
             legend: {
@@ -326,19 +340,19 @@
                 datasets: [{
                     label: "Bombs",
                     data: daters,
-                    backgroundColor:'#faa'
+                    backgroundColor: '#faa'
                 }]
             },
             options: options,
         });
     }
 
-    function generateSimulationCharts(hitContext, blockContext,corContext, simulationIdx) {
+    function generateSimulationCharts(hitContext, blockContext, corContext, simulationIdx) {
         var data = generateSimulationData(200);
         generateHitChart(data.hits, hitContext, simulationIdx);
         generateBlockChart(data.hist, blockContext, simulationIdx);
-        generateCorrelationChart(data.hist,corContext,simulationIdx);
-        
+        generateCorrelationChart(data.hist, corContext, simulationIdx);
+
     }
 
 
@@ -416,7 +430,7 @@
     for (var simulationIdx = 0; simulationIdx < 4; simulationIdx++) {
         var hitid = 'simulation-hit-chart-' + (simulationIdx + 1).toString(10);
         var blockid = 'simulation-block-chart-' + (simulationIdx + 1).toString(10);
-        var corid='simulation-correlation-chart-'+ (simulationIdx + 1).toString(10);
+        var corid = 'simulation-correlation-chart-' + (simulationIdx + 1).toString(10);
         generateSimulationCharts(
             document.getElementById(hitid).getContext('2d'),
             document.getElementById(blockid).getContext('2d'),
