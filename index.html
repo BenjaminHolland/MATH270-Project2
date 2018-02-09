@@ -3,54 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.20.1/math.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>
+    <style>
+        .square {
+            width: 100%;
+
+            padding-bottom: 100%;
+        }
+
+    </style>
 </head>
 <body>
-<canvas id="boom_chart"></canvas>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <canvas id="simulation-chart-1"></canvas>
+        </div>
+        <div class="col">
+            <canvas id="simulation-chart-2"></canvas>
+        </div>
+        <div class="w-100"></div>
+        <div class="col">
+            <canvas id="simulation-chart-3"></canvas>
+        </div>
+        <div class="col">
+            <canvas id="simulation-chart-4"></canvas>
+        </div>
+    </div>
+</div>
 <script>
-    function bernoulli(n,p,k){
-        return math.combinations(n,k)*math.pow(p,k)*math.pow(1-p,n-k)
+    function bernoulli(n, p, k) {
+        return math.combinations(n, k) * math.pow(p, k) * math.pow(1 - p, n - k)
     }
-    function
-    var ctx = document.getElementById("boom_chart").getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-            datasets: [{
-                label: '# of Votes',
-                data: [bernoulli(10,0.2,5), bernoulli(10,0.2,6), bernoulli(10,0.2,7), bernoulli(10,0.2,8), bernoulli(10,0.2,9), bernoulli(10,0.2,10)],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
-                }]
+
+    function generateSimulationData(bombCount) {
+        var hits = [];
+        var histogram = [];
+        for (var y = 0; y < 10; y++) {
+            var row = [];
+            for (var x = 0; x < 10; x++) {
+                row.push(0);
+            }
+            histogram.push(row);
+        }
+        for (var bombIdx = 0; bombIdx < bombCount; bombIdx++) {
+            var hit = {
+                x: math.random() * 10,
+                y: math.random() * 10
+            };
+            var xi = parseInt(hit.x);
+            var yi = parseInt(hit.y);
+            histogram[yi][xi]++;
+            hits.push(hit);
+
+        }
+        return {
+            hits: hits,
+            hist: histogram
+        };
+    }
+
+    function runSimulation(context, simulationIdx) {
+        var bombs = generateSimulationData(200);
+        var blocks = [];
+        for (var y = 0; y < 10; y++) {
+            for (var x = 0; x < 10; x++) {
+                blocks.push({
+                    x: x + 0.5,
+                    y: y + 0.5,
+                    v: bombs.hist[y][x] * 10
+                });
             }
         }
-    });
+        var chart = new Chart(context, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Bombs',
+                    data: bombs.hits,
+                    backgroundColor:'#fff00ff',
+                }, {
+                    type: 'bubble',
+                    label: "Bomb Hits",
+                    data: blocks
+                },]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 1,
+                title: {
+                    display: true,
+                    text: "Simulation " + simulationIdx.toString(),
+                    backgroundColor: '#f00',
+                },
+                legend: {
+                    display: true,
+                    labels: {
+                        fontColor: '#ff0000',
+                        usePointStyle: true
+                    }
+                },
+                elements: {
+                    point: {
 
+                        pointRadius:1,
+                        radius: function (context) {
+                            return 10;
+
+                        }
+                    }
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            min: 0,
+                            max: 10,
+                            stepSize: 1
+                        }
+                    }],
+                    xAxes: [{
+                        ticks: {
+                            min: 0,
+                            max: 10,
+                            stepSize: 1
+                        }
+                    }]
+                }
+            }
+        })
+    }
+
+    for (var simulationIdx = 0; simulationIdx < 4; simulationIdx++) {
+        var id = 'simulation-chart-' + (simulationIdx + 1).toString(10)
+        console.log(id);
+        runSimulation(document.getElementById(id).getContext('2d'), simulationIdx);
+    }
 </script>
 </body>
 </html>
